@@ -24,14 +24,18 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findOneAndDelete(req.param.cardId)
+  Card.findByIdAndRemove(req.params.cardId)
     .orFail(new Error('invalidId'))
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => {
+      res.status(200).send({ data: card });
+    })
     .catch((err) => {
       if (err.message === 'invalidId') {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
+      } else if (err instanceof ValidationError || err instanceof CastError) {
+        res.status(400).send({ message: 'Переданы некорректные данные для удаления карточки.' });
       } else {
-        res.status(400).send({ message: 'Переданы некорректные данные для удаления карточки' });
+        res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
