@@ -4,9 +4,9 @@ const regForURLValidation = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-
 
 const validateUserRegistration = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(30).required(),
-    avatar: Joi.string().pattern(regForURLValidation).required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(regForURLValidation),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
