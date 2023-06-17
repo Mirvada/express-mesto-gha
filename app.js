@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const userRouter = require('./routes/users');
-const cardRouter = require('./routes/cards');
+const { errors } = require('celebrate');
+const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+const { validateUserRegistration, validateUserLogin } = require('./middlewares/validation');
 
 const { PORT = 3000 } = process.env;
 
@@ -18,18 +20,28 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 app.use(helmet());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64736fc84e1f002e73c4cf4e',
-  };
+app.post('/signin', validateUserLogin, login);
+app.post('/signup', validateUserRegistration, createUser);
 
-  next();
-});
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Указанный путь не найден.' });
+});
+
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res.status(statusCode).send({
+    message: statusCode === 500
+      ? 'На сервере произошла ошибка'
+      : message,
+  });
+
+  next();
 });
 
 app.listen(PORT, () => {
