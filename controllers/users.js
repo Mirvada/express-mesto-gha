@@ -18,7 +18,7 @@ const getUsers = (req, res, next) => {
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new Error('invalidId'))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err instanceof CastError) {
         next(new BadRequest('Переданы некорректные данные'));
