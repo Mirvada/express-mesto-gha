@@ -17,7 +17,6 @@ const getUsers = (req, res, next) => {
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(new Error('invalidId'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err instanceof CastError) {
@@ -75,7 +74,7 @@ const updateUser = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail(new Error('invalidId'))
+    .orFail(new NotFound('Пользователь по указанному _id не найден.'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -95,7 +94,7 @@ const updateUserAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail(new Error('invalidId'))
+    .orFail(new NotFound('Пользователь по указанному _id не найден.'))
     .then((user) => {
       res.status(200).send({ data: user });
     })
