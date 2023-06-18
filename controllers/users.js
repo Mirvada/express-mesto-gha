@@ -6,7 +6,6 @@ const { ValidationError, CastError } = mongoose.Error;
 const User = require('../models/user');
 const BadRequest = require('../utils/errors/BadRequestError');
 const NotFound = require('../utils/errors/NotFoundError');
-const Unauthorized = require('../utils/errors/UnauthorizedError');
 const Conflict = require('../utils/errors/ConflictError');
 
 const getUsers = (req, res, next) => {
