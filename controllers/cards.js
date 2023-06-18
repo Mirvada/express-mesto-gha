@@ -54,7 +54,7 @@ const likeCard = (req, res, next) => {
     .orFail(new NotFound('Карточка с указанным _id не найдена.'))
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err instanceof ValidationError || err instanceof CastError) {
+      if (err instanceof CastError) {
         next(new BadRequest('Переданы некорректные данные для постановки лайка.'));
       } else {
         next(err);
@@ -71,7 +71,7 @@ const dislikeCard = (req, res, next) => {
     .orFail(new NotFound('Карточка с указанным _id не найдена.'))
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err instanceof ValidationError || err instanceof CastError) {
+      if (err instanceof CastError) {
         next(new BadRequest('Переданы некорректные данные для снятии лайка.'));
       } else {
         next(err);
