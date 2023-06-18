@@ -2,10 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
-const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const { validateUserRegistration, validateUserLogin } = require('./middlewares/validation');
-const NotFoundError = require('./utils/errors/NotFoundError');
+const router = require('./routes');
 
 const { PORT = 3000 } = process.env;
 
@@ -21,15 +18,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 app.use(helmet());
 app.use(express.json());
 
-app.post('/signin', validateUserLogin, login);
-app.post('/signup', validateUserRegistration, createUser);
-
-app.use('/users', auth, require('./routes/users'));
-app.use('/cards', auth, require('./routes/cards'));
-
-app.use('*', (req, res, next) => {
-  next(new NotFoundError('Указанный путь не найден.'));
-});
+app.use(router);
 
 app.use(errors());
 
