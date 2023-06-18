@@ -1,6 +1,4 @@
-const router = require('express').Router();
-
-router.use((err, req, res, next) => {
+module.exports = (err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
   res.status(statusCode).send({
@@ -10,6 +8,4 @@ router.use((err, req, res, next) => {
   });
 
   next();
-});
-
-module.exports = router;
+};
