@@ -17,28 +17,16 @@ const getUsers = (req, res, next) => {
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
+    .orFail(new NotFound('Пользователь по указанному _id не найден.'))
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err instanceof CastError) {
-        next(new BadRequest('Переданы некорректные данные'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
+
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(new Error('invalidId'))
+    .orFail(new NotFound('Пользователь по указанному _id не найден.'))
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err instanceof CastError) {
-        next(new BadRequest('Переданы некорректные данные'));
-      } else if (err.message === 'invalidId') {
-        next(new NotFound('Пользователь по указанному _id не найден.'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 const createUser = (req, res, next) => {
@@ -119,9 +107,7 @@ const login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch(() => {
-      next(new Unauthorized('Неверный email или пароль'));
-    });
+    .catch((err) => next(err));
 };
 
 module.exports = {
