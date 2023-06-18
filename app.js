@@ -5,6 +5,7 @@ const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { validateUserRegistration, validateUserLogin } = require('./middlewares/validation');
+const NotFoundError = require('./utils/errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -26,8 +27,8 @@ app.post('/signup', validateUserRegistration, createUser);
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Указанный путь не найден.' });
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Указанный путь не найден.'));
 });
 
 app.use(errors());
